@@ -48,51 +48,15 @@ The dataset structure:
 messages (JSON)	params (JSON)	target (str)
 Serialized list of chat messages	Serialized params	Expected answer
 
-Evaluation metrics (e.g., accuracy, BLEU, ROUGE) are automatically computed and logged.
+Evaluation metrics 
+(e.g., accuracy, BLEU, ROUGE) are automatically computed and logged.
 
 System Diagram
-plaintext
-Copy
-Edit
-+------------------+       +------------------------+       +------------------+
-| Client / Frontend | ----> | MLflow Model Predict API| ----> | MyAgent.predict() |
-+------------------+       +------------------------+       +------------------+
-                                         |                              |
-                                         v                              v
-                              Serialized JSON input           Deserialization to
-                                     (messages, params)       ChatMessage & ChatParams
-                                         |                              |
-                                         v                              v
-                               +----------------+          +----------------------+
-                               | my_agent_function | <---- | ChatMessage, ChatParams|
-                               +----------------+          +----------------------+
-                                         |                              |
-                                         v                              v
-                              Generates response text       Wraps output in
-                                                       ChatCompletionResponse
-                                         |                              |
-                                         v                              v
-                                Serialized JSON response <----- Returns dict to MLflow
+<img width="744" alt="Screenshot 2025-05-28 at 23 38 47" src="https://github.com/user-attachments/assets/0f56b787-78dc-4c83-8f27-e704286bfa87" />
+<img width="630" alt="Screenshot 2025-05-28 at 23 37 51" src="https://github.com/user-attachments/assets/7b685892-e543-4e64-a627-af417ab25be1" />
 
-+---------------------+        +--------------------+
-| Evaluation Dataset  |        |  Input Examples     |
-| (messages + target) |        |  (list of messages) |
-+---------------------+        +--------------------+
-           |                             |
-           v                             v
-+------------------------------+   +------------------------+
-|     evaluate_llm.py         |   |  mlflow.pyfunc.log_model |
-| - JSONL / CSV ingestion      |   |  - Wrap MyAgent          |
-| - Serialization of inputs    |   |  - Register version      |
-| - Calls mlflow.evaluate()    |   |                          |
-+------------------------------+   +------------------------+
-           |                             |
-           v                             v
-+-------------------------------+   +-----------------------------+
-|         MyAgent              |<--|     agent_function (LLM)     |
-| - Unpacks messages, params   |   | - Stateful / stateless agent |
-| - Returns response + metadata|   | - Calls OpenAI / Azure etc.  |
-+-------------------------------+   +-----------------------------+
+
+
 
 Future Directions: Comparative LLM Model Evaluation
 To systematically improve and benchmark conversational performance, a future roadmap includes:
