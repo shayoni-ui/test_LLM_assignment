@@ -1,0 +1,48 @@
+{
+    "demographics": {
+        "description": "Includes case-related demographic details such as ethnicity, gender, race, year of birth, and year of death. This data is essential for analyzing trends and patterns across different demographic groups, assisting in decision-making and resource allocation. The table helps understand the diversity and characteristics of the studied population, providing insights into disparities or specific demographic needs.",
+        "sample_schema": [
+            {
+                "case_id": "0030a28c-81aa-44b0-8be0-b35e1dcbf98c",
+                "ethnicity": "not hispanic or latino",
+                "gender": "female",
+                "race": "asian",
+                "year_of_birth": 1952.0,
+                "year_of_death": 2002.0,
+                "file_id": "0bd755e8-752f-49f0-9574-ea7813a7f0e0"
+            }
+        ]
+    },
+    "diagnoses": {
+        "description": "Includes data on tumor diagnoses, such as tumor classification, primary diagnosis, tissue or organ of origin, treatments administered, tumor grade, and file ID. It tracks and manages tumor diagnosis cases, offering insights into tumor types, origins, and treatments. This data is vital for healthcare professionals and researchers to analyze trends in tumor diagnoses and treatment outcomes.",
+        "sample_schema": [
+            {
+                "case_id": "0030a28c-81aa-44b0-8be0-b35e1dcbf98c",
+                "classification_of_tumor": "not reported",
+                "diagnosis_id": "a4ecd69c-6156-5653-973f-5d3446d68a40",
+                "primary_diagnosis": "Malignant lymphoma, large B-cell, diffuse, NOS",
+                "tissue_or_organ_of_origin": "Intra-abdominal lymph nodes",
+                "treatments0_therapeutic_agents": "N/A",
+                "treatments0_treatment_id": "9c611d7e-3ccf-5886-8743-53ab33fef092",
+                "treatments1_therapeutic_agents": "N/A",
+                "treatments1_treatment_id": "dcb0c9cf-1372-5f90-b9f6-3fbfcb8b3cb7",
+                "treatments1_updated_datetime": "2019-07-31T21:32:22.377Z",
+                "tumor_grade": "not reported",
+                "file_id": "0bd755e8-752f-49f0-9574-ea7813a7f0e0"
+            }
+        ]
+    },
+    "exposures": {
+        "description": "The 'exposures' table includes data on various exposures like alcohol history, alcohol intensity, cigarettes per day, and years smoked for different case IDs. This information is essential for analyzing the potential impact of these exposures on specific cases. The table serves as a repository for exposure data used in research, risk assessment, and personalized interventions.",
+        "sample_schema": [
+            {
+                "case_id": "0030a28c-81aa-44b0-8be0-b35e1dcbf98c",
+                "alcohol_history": "Not Reported",
+                "alcohol_intensity": "N/A",
+                "cigarettes_per_day": 0,
+                "years_smoked": 0,
+                "file_id": "0bd755e8-752f-49f0-9574-ea7813a7f0e0"
+            }
+        ]
+    }
+}

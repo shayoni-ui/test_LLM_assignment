@@ -1,0 +1,139 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "os.listdir()\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 25,
+          "data": {
+            "text/plain": "['.amlignore',\n '.amlignore.amltmp',\n '.ipynb_aml_checkpoints',\n 'agent_config.py',\n 'agent_langchain.ipynb',\n 'agent_langchain.ipynb.amltmp',\n 'azure_openai.py',\n 'main-copy.ipynb',\n 'main-copy.ipynb.amltmp',\n 'main.ipynb',\n 'main.ipynb.amltmp',\n 'README.md',\n 'tools.py',\n 'utils.py',\n '__pycache__']"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 25,
+      "metadata": {
+        "gather": {
+          "logged": 1747956450785
+        }
+      },
+      "id": "6105f58d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sys\n",
+        "import os\n",
+        "sys.path.append(os.getcwd())"
+      ],
+      "outputs": [],
+      "execution_count": 26,
+      "metadata": {
+        "gather": {
+          "logged": 1747956453971
+        }
+      },
+      "id": "a0bb1ac2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%run /home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/azureml/agents/agent_config.py\n"
+      ],
+      "outputs": [],
+      "execution_count": 29,
+      "metadata": {},
+      "id": "e30ae880"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from azure_openai import *\n",
+        "\n",
+        "chat_model = model_client()\n",
+        "openai_client = create_openai_client()\n",
+        "\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "name 'keyvault' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[30], line 3\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;21;01mazure_openai\u001b[39;00m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;241m*\u001b[39m\n\u001b[0;32m----> 3\u001b[0m chat_model \u001b[38;5;241m=\u001b[39m \u001b[43mmodel_client\u001b[49m\u001b[43m(\u001b[49m\u001b[43m)\u001b[49m\n\u001b[1;32m      4\u001b[0m openai_client \u001b[38;5;241m=\u001b[39m create_openai_client()\n",
+            "File \u001b[0;32m/mnt/batch/tasks/shared/LS_root/mounts/clusters/shayonisimms/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/azureml/agents/azure_openai.py:31\u001b[0m, in \u001b[0;36mmodel_client\u001b[0;34m()\u001b[0m\n\u001b[1;32m     30\u001b[0m \u001b[38;5;28;01mdef\u001b[39;00m \u001b[38;5;21mmodel_client\u001b[39m() \u001b[38;5;241m-\u001b[39m\u001b[38;5;241m>\u001b[39m AzureChatOpenAI:\n\u001b[0;32m---> 31\u001b[0m     access_token \u001b[38;5;241m=\u001b[39m \u001b[43mcreate_bearer_token\u001b[49m\u001b[43m(\u001b[49m\u001b[43m)\u001b[49m\n\u001b[1;32m     32\u001b[0m     token_provider \u001b[38;5;241m=\u001b[39m CustomTokenProvider(access_token)\n\u001b[1;32m     33\u001b[0m     \u001b[38;5;28;01mreturn\u001b[39;00m AzureChatOpenAI(\n\u001b[1;32m     34\u001b[0m         model\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mo1\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m     35\u001b[0m         azure_endpoint\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mhttps://dev.api.gsk.com/co/psc/azureopenai/us6/\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[0;32m   (...)\u001b[0m\n\u001b[1;32m     39\u001b[0m         azure_ad_token_provider\u001b[38;5;241m=\u001b[39mtoken_provider\n\u001b[1;32m     40\u001b[0m     )\n",
+            "File \u001b[0;32m/mnt/batch/tasks/shared/LS_root/mounts/clusters/shayonisimms/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/azureml/agents/azure_openai.py:17\u001b[0m, in \u001b[0;36mcreate_bearer_token\u001b[0;34m()\u001b[0m\n\u001b[1;32m     15\u001b[0m \u001b[38;5;28;01mdef\u001b[39;00m \u001b[38;5;21mcreate_bearer_token\u001b[39m() \u001b[38;5;241m-\u001b[39m\u001b[38;5;241m>\u001b[39m \u001b[38;5;28mstr\u001b[39m:\n\u001b[1;32m     16\u001b[0m     federation_url \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mhttps://federation-qa.gsk.com/as/token.oauth2\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[0;32m---> 17\u001b[0m     client_id \u001b[38;5;241m=\u001b[39m \u001b[43mkeyvault\u001b[49m\u001b[38;5;241m.\u001b[39mget_secret(name\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mflow-ai-id\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m     18\u001b[0m     client_secret \u001b[38;5;241m=\u001b[39m keyvault\u001b[38;5;241m.\u001b[39mget_secret(name\u001b[38;5;241m=\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mflow-ai-access\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n\u001b[1;32m     19\u001b[0m     token_data \u001b[38;5;241m=\u001b[39m {\n\u001b[1;32m     20\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mgrant_type\u001b[39m\u001b[38;5;124m\"\u001b[39m: \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mclient_credentials\u001b[39m\u001b[38;5;124m\"\u001b[39m,\n\u001b[1;32m     21\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mclient_id\u001b[39m\u001b[38;5;124m\"\u001b[39m: client_id,\n\u001b[1;32m     22\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mclient_secret\u001b[39m\u001b[38;5;124m\"\u001b[39m: client_secret\n\u001b[1;32m     23\u001b[0m     }\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'keyvault' is not defined"
+          ]
+        }
+      ],
+      "execution_count": 30,
+      "metadata": {
+        "gather": {
+          "logged": 1747956478594
+        }
+      },
+      "id": "021c9b5a"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from tools import get_tools\n",
+        "\n",
+        "tools = get_tools()\n"
+      ],
+      "outputs": [],
+      "execution_count": 21,
+      "metadata": {
+        "gather": {
+          "logged": 1747956373365
+        }
+      },
+      "id": "cb7370b2"
+    }
+  ],
+  "metadata": {
+    "kernel_info": {
+      "name": "python310-sdkv2"
+    },
+    "kernelspec": {
+      "name": "python310-sdkv2",
+      "language": "python",
+      "display_name": "Python 3.10 - SDK v2"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.10.14",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      },
+      "host": {
+        "AzureML": {
+          "notebookHasBeenCompleted": true
+        }
+      }
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

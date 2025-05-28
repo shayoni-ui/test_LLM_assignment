@@ -1,0 +1,878 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import sys\n",
+        "sys.path.insert(0, os.path.abspath(\"../\"))\n",
+        "from agent_config import *"
+      ],
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ModuleNotFoundError",
+          "evalue": "No module named 'azure.identity'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m                       Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[6], line 4\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01msys\u001b[39;00m\n\u001b[1;32m      3\u001b[0m sys\u001b[38;5;241m.\u001b[39mpath\u001b[38;5;241m.\u001b[39minsert(\u001b[38;5;241m0\u001b[39m, os\u001b[38;5;241m.\u001b[39mpath\u001b[38;5;241m.\u001b[39mabspath(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m../\u001b[39m\u001b[38;5;124m\"\u001b[39m))\n\u001b[0;32m----> 4\u001b[0m \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;21;01magent_config\u001b[39;00m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;241m*\u001b[39m\n",
+            "File \u001b[0;32m/mnt/batch/tasks/shared/LS_root/mounts/clusters/shayonisimms/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/azureml/agent_config.py:2\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mos\u001b[39;00m\n\u001b[0;32m----> 2\u001b[0m \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;21;01mazure\u001b[39;00m\u001b[38;5;21;01m.\u001b[39;00m\u001b[38;5;21;01midentity\u001b[39;00m \u001b[38;5;28;01mimport\u001b[39;00m DefaultAzureCredential\n\u001b[1;32m      3\u001b[0m \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;21;01mazure\u001b[39;00m\u001b[38;5;21;01m.\u001b[39;00m\u001b[38;5;21;01mkeyvault\u001b[39;00m\u001b[38;5;21;01m.\u001b[39;00m\u001b[38;5;21;01msecrets\u001b[39;00m \u001b[38;5;28;01mimport\u001b[39;00m SecretClient\n\u001b[1;32m      5\u001b[0m dir_path \u001b[38;5;241m=\u001b[39m os\u001b[38;5;241m.\u001b[39mgetcwd()\n",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m: No module named 'azure.identity'"
+          ]
+        }
+      ],
+      "execution_count": 6,
+      "metadata": {
+        "gather": {
+          "logged": 1747521804436
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "cmd = f'pip install -r {MAIN_DIR_PATH}/azureml/requirements.txt --quiet'\n",
+        "!{cmd}"
+      ],
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "name 'MAIN_DIR_PATH' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[5], line 1\u001b[0m\n\u001b[0;32m----> 1\u001b[0m cmd \u001b[38;5;241m=\u001b[39m \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124mpip install -r \u001b[39m\u001b[38;5;132;01m{\u001b[39;00m\u001b[43mMAIN_DIR_PATH\u001b[49m\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m/azureml/requirements.txt --quiet\u001b[39m\u001b[38;5;124m'\u001b[39m\n\u001b[1;32m      2\u001b[0m get_ipython()\u001b[38;5;241m.\u001b[39msystem(\u001b[38;5;124m'\u001b[39m\u001b[38;5;132;01m{cmd}\u001b[39;00m\u001b[38;5;124m'\u001b[39m)\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'MAIN_DIR_PATH' is not defined"
+          ]
+        }
+      ],
+      "execution_count": 5,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "234b0e75-3299-4ae7-931d-05ab9bae66b6",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1747521800388
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import json\n",
+        "import os\n",
+        "from typing import Any, List, Optional, Type\n",
+        "\n",
+        "import mlflow  # type: ignore\n",
+        "import pandas as pd\n",
+        "# from databricks.sdk.runtime import *  # type: ignore # noqa\n",
+        "from langchain.agents import AgentExecutor, create_openai_tools_agent\n",
+        "from langchain.agents.agent import RunnableAgent, RunnableMultiActionAgent\n",
+        "from langchain.output_parsers import ResponseSchema, StructuredOutputParser\n",
+        "from langchain.pydantic_v1 import BaseModel, Field\n",
+        "from langchain.tools import BaseTool\n",
+        "from langchain_core.prompts import (\n",
+        "    ChatPromptTemplate,\n",
+        "    MessagesPlaceholder,\n",
+        "    PromptTemplate,\n",
+        ")\n",
+        "from langchain_openai import AzureChatOpenAI\n",
+        "from mlflow.types.llm import (  # Non-streaming helper classes\n",
+        "    ChatChoice,\n",
+        "    ChatCompletionResponse,\n",
+        "    ChatMessage,\n",
+        "    ChatParams,\n",
+        ")\n",
+        "from pandasql import sqldf\n",
+        "\n",
+        "from utils import *"
+      ],
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ModuleNotFoundError",
+          "evalue": "No module named 'mlflow'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m                       Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[4], line 5\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mos\u001b[39;00m\n\u001b[1;32m      3\u001b[0m \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;21;01mtyping\u001b[39;00m \u001b[38;5;28;01mimport\u001b[39;00m Any, List, Optional, Type\n\u001b[0;32m----> 5\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mmlflow\u001b[39;00m  \u001b[38;5;66;03m# type: ignore\u001b[39;00m\n\u001b[1;32m      6\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mpandas\u001b[39;00m \u001b[38;5;28;01mas\u001b[39;00m \u001b[38;5;21;01mpd\u001b[39;00m\n\u001b[1;32m      7\u001b[0m \u001b[38;5;66;03m# from databricks.sdk.runtime import *  # type: ignore # noqa\u001b[39;00m\n",
+            "\u001b[0;31mModuleNotFoundError\u001b[0m: No module named 'mlflow'"
+          ]
+        }
+      ],
+      "execution_count": 4,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "aac1125c-8744-4ecb-83ee-a05eb7a9c7a4",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1747521768978
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Running the agent_config notebook to iniate the constants"
+      ],
+      "outputs": [],
+      "execution_count": 27,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "ca611509-ebdb-4428-859b-a3b9545e2eb7",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740428975780
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# MLFlow Setup\n",
+        "\n",
+        "experiment = mlflow.set_experiment(EXPERIMENT_PATH)  # type: ignore  # noqa"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "2025/02/24 20:29:44 INFO mlflow.tracking.fluent: Experiment with name '/mnt/batch/tasks/shared/LS_root/mounts/clusters/rodscompute2/code/Users/rod.x.goulart/agent_demo_exp' does not exist. Creating a new experiment.\n"
+        }
+      ],
+      "execution_count": 29,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "ad423e1a-5cf0-4ce3-bca8-68f1c9c5df06",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740428984504
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "token_provider = get_bearer_token_provider_kong()"
+      ],
+      "outputs": [],
+      "execution_count": 6,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "11b54c02-3c59-4449-b1e6-83133d75ff67",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740428995403
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "files_metadata, csv_files_data = generate_source_data(f'{MAIN_DIR_PATH}/datasources')"
+      ],
+      "outputs": [],
+      "execution_count": 7,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "249bc52b-578c-423d-8ab1-51c1408f595a",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740428997322
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Setting up the agent's tools"
+      ],
+      "outputs": [],
+      "execution_count": 8,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "class GetDatasetMetadaInput(BaseModel):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating input for agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        <var> (<type>): Variable names that tool will use as input arguments.\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    question: Optional[str] = Field(description=\"The prompt/request from the user\", default=None)\n",
+        "\n",
+        "\n",
+        "class GetDatasetMetadaTool(BaseTool):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        name (str): The name of the agent tool.\n",
+        "        description (str): A brief description of the agent tool.\n",
+        "        args_schema (Type[BaseModel]): The schema model for the arguments the agent tool accepts.\n",
+        "\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    name: str = \"get_file_metadata\"\n",
+        "    description: str = (\n",
+        "        \"Provides the metada, (like description, schema and sample) of the dataset (multiple CSV files) to be used for inference by the agent.\"\n",
+        "    )\n",
+        "    args_schema: Type[BaseModel] = GetDatasetMetadaInput\n",
+        "\n",
+        "    def _run(self, question: Optional[str] = None) -> Any:\n",
+        "        \"\"\"\n",
+        "        Synchronously run the agent tool to provide the appropriate file name and file schema to\n",
+        "        answer the user's question.\n",
+        "\n",
+        "        Args:\n",
+        "            question (str): The question asked by user in input terminal.\n",
+        "\n",
+        "        Returns:\n",
+        "            It provides a dictionary with the metadata (file name, description, schema and sample).\n",
+        "        \"\"\"\n",
+        "\n",
+        "        return json.dumps(files_metadata)"
+      ],
+      "outputs": [],
+      "execution_count": 9,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "a60946d1-53a2-42c7-9dd3-7d7f9fe29a52",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429014142
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "class GetTargetFileSchemaInput(BaseModel):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating input for agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        <var> (<type>): Variable names that tool will use as input arguments.\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    question: str = Field(description=\"The prompt/request from the user\")\n",
+        "    files_metadata: str = Field(\n",
+        "        description=\"A dictionary containing the metadata about the CSV files in the dataset.\"\n",
+        "    )\n",
+        "\n",
+        "\n",
+        "class GetTargetFileSchemaTool(BaseTool):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        name (str): The name of the agent tool.\n",
+        "        description (str): A brief description of the agent tool.\n",
+        "        args_schema (Type[BaseModel]): The schema model for the arguments the agent tool accepts.\n",
+        "\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    name: str = \"get_target_file_schema\"\n",
+        "    description: str = (\n",
+        "        \"Provides the most likely file_name and file_schema to be used for querying based on \\\n",
+        "         the input question and the files/dataset metadata.\"\n",
+        "    )\n",
+        "    args_schema: Type[BaseModel] = GetTargetFileSchemaInput\n",
+        "\n",
+        "    def _run(self, question: str, files_metadata: str) -> Any:\n",
+        "        \"\"\"\n",
+        "        Synchronously run the agent tool to provide the appropriate file name and file schema to\n",
+        "        answer the user's question.\n",
+        "\n",
+        "        Args:\n",
+        "            question (str): The question asked by user in input terminal.\n",
+        "\n",
+        "        Returns:\n",
+        "            It provides with relevant file_name and file schema from where question belongs to.\n",
+        "        \"\"\"\n",
+        "\n",
+        "        response_schemas = [\n",
+        "            ResponseSchema(\n",
+        "                name=\"file_name\",\n",
+        "                description=\"The selected file's name.\",\n",
+        "            ),\n",
+        "            ResponseSchema(\n",
+        "                name=\"file_schema\",\n",
+        "                description=\"The select file's schema.\",\n",
+        "            ),\n",
+        "        ]\n",
+        "\n",
+        "        output_parser = StructuredOutputParser.from_response_schemas(response_schemas)\n",
+        "        format_instructions = output_parser.get_format_instructions()\n",
+        "\n",
+        "        format_instructions += (\n",
+        "            ' make sure to format it properly to be used as JSON, like enclosing strings with \".'\n",
+        "        )\n",
+        "\n",
+        "        prompt_text = \"\"\"\n",
+        "        Given the files listed below and their respective file schema, select the most \\\n",
+        "        relevant file to answer the following question: '{question}'.\n",
+        "        {files_metadata}.\n",
+        "        {format_instructions}.\n",
+        "        You can remove the sample data from the file_schema, just pass a string with each column separated by commas.\n",
+        "        \"\"\"\n",
+        "\n",
+        "        prompt = PromptTemplate.from_template(\n",
+        "            template=prompt_text,\n",
+        "            partial_variables={\n",
+        "                \"format_instructions\": format_instructions,\n",
+        "                \"files_metadata\": files_metadata,\n",
+        "            },\n",
+        "        )\n",
+        "        _input = {\"question\": question}\n",
+        "\n",
+        "        model = AzureChatOpenAI(\n",
+        "            azure_ad_token_provider=token_provider,\n",
+        "            deployment_name=DEPLOYMENT_NAME,  # type: ignore  # noqa\n",
+        "            azure_endpoint=os.getenv(\"KONG_API_GATEWAY_ENDPOINT\"),\n",
+        "        )\n",
+        "\n",
+        "        chain = prompt | model | output_parser\n",
+        "\n",
+        "        res = chain.invoke(_input)\n",
+        "\n",
+        "        return res"
+      ],
+      "outputs": [],
+      "execution_count": 10,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "730f4683-d5b5-491b-b988-6e242d203199",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429015308
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "class GenerateSQLForFileInput(BaseModel):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating input for agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        <var> (<type>): Variable names that tool will use as input arguments.\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    question: str = Field(\n",
+        "        description=\"The prompt/request from the user to generate the SQL query for.\"\n",
+        "    )\n",
+        "    file_name: str = Field(\n",
+        "        description=\"The file name that represents the table name to be used in the SQL query\"\n",
+        "    )\n",
+        "    file_schema: str = Field(\n",
+        "        description=\"A dictionary represented as string representing a sample of the file's \\\n",
+        "                     schema to be used in the SQL query\"\n",
+        "    )\n",
+        "\n",
+        "\n",
+        "class GenerateSQLForFileTool(BaseTool):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        name (str): The name of the agent tool.\n",
+        "        description (str): A brief description of the agent tool.\n",
+        "        args_schema (Type[BaseModel]): The schema model for the arguments the agent tool accepts.\n",
+        "\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    name: str = \"generate_sql_for_file\"\n",
+        "    description: str = (\n",
+        "        \"\"\"Provides the SQL query to used to answer the user's request based on a \\\n",
+        "        file_name (that represent the table name) and a file_schema \\\n",
+        "        (that represents the colums in the table)\"\"\"\n",
+        "    )\n",
+        "    args_schema: Type[BaseModel] = GenerateSQLForFileInput\n",
+        "\n",
+        "    def _run(self, question: str, file_name: str, file_schema: str) -> Any:\n",
+        "        \"\"\"\n",
+        "        Synchronously run the agent tool to provide sql query to be ran on the datasource.\n",
+        "\n",
+        "        Args:\n",
+        "            question (str): The question asked by user in input terminal.\n",
+        "            file_name (str): Relevant file name generated by GetTargetFileSchemaTool.\n",
+        "            file_schema (str): Relevant file schema generated by GetTargetFileSchemaTool.\n",
+        "\n",
+        "        Returns:\n",
+        "            It provides with relevant SQL query with file_name as table and column name\n",
+        "            refers in file_schema.\n",
+        "        \"\"\"\n",
+        "\n",
+        "        response_schemas = [\n",
+        "            ResponseSchema(\n",
+        "                name=\"sql_query\",\n",
+        "                description=\"SQL query that will be returned\",\n",
+        "            ),\n",
+        "        ]\n",
+        "\n",
+        "        output_parser = StructuredOutputParser.from_response_schemas(response_schemas)\n",
+        "        format_instructions = output_parser.get_format_instructions()\n",
+        "\n",
+        "        format_instructions += \" make sure to format it properly to be used as plain string \\\n",
+        "                                 like one sentence with SQL query.\"\n",
+        "\n",
+        "        prompt_text = \"\"\"\n",
+        "        Given the following file name '{file_name}', that is supposed\n",
+        "        to be used as the SQL table name\n",
+        "        and the following JSON representing the schema of the columns in that\n",
+        "        table:\n",
+        "\n",
+        "        {file_schema}\n",
+        "\n",
+        "        Please provide a SQL query that answers the following question: '{question}'.\n",
+        "\n",
+        "        When string values are to be used as filters, make sure\n",
+        "        both the column and value have lower case to avoid case sensitive issues.\n",
+        "\n",
+        "        Just answer with the SQL query and nothing else.\n",
+        "\n",
+        "        {format_instructions}\n",
+        "\n",
+        "        \"\"\"\n",
+        "\n",
+        "        model = AzureChatOpenAI(\n",
+        "            azure_ad_token_provider=token_provider,\n",
+        "            deployment_name=DEPLOYMENT_NAME,  # type: ignore  # noqa\n",
+        "            azure_endpoint=os.getenv(\"KONG_API_GATEWAY_ENDPOINT\"),\n",
+        "        )\n",
+        "\n",
+        "        prompt = PromptTemplate.from_template(\n",
+        "            template=prompt_text, partial_variables={\"format_instructions\": format_instructions}\n",
+        "        )\n",
+        "        _input = {\"question\": question, \"file_name\": file_name, \"file_schema\": file_schema}\n",
+        "\n",
+        "        chain = prompt | model | output_parser\n",
+        "\n",
+        "        res = chain.invoke(_input)[\"sql_query\"]\n",
+        "\n",
+        "        return res"
+      ],
+      "outputs": [],
+      "execution_count": 11,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "4e6b90d0-4a60-4bbc-8153-32d37400f4c7",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429015609
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "class GenerateAnswerforQuestionInput(BaseModel):\n",
+        "    \"\"\"\n",
+        "\n",
+        "    Abstract base class for creating input for agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        <var> (<type>): Variable names that tool will use as input arguments.\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    question: str = Field(description=\"The initial prompt/request from the user.\")\n",
+        "    sql_query: str = Field(description=\"The SQL query to be executed on the database\")\n",
+        "    file_name: str = Field(\n",
+        "        description=\"The file name that represents the table name to be used in the SQL query\"\n",
+        "    )\n",
+        "    file_schema: str = Field(\n",
+        "        description=\"A dictionary represented as string representing a sample of the file's \\\n",
+        "                     schema to be used in the SQL query\"\n",
+        "    )\n",
+        "\n",
+        "\n",
+        "class GenerateAnswerforQuestionTool(BaseTool):\n",
+        "    \"\"\"\n",
+        "    Abstract base class for creating agent tools.\n",
+        "\n",
+        "    Attributes:\n",
+        "        name (str): The name of the agent tool.\n",
+        "        description (str): A brief description of the agent tool.\n",
+        "        args_schema (Type[BaseModel]): The schema model for the arguments the agent tool accepts.\n",
+        "\n",
+        "    \"\"\"\n",
+        "\n",
+        "    name: str = \"generate_answer_for_question\"\n",
+        "    description: str = \"\"\"Provides answer once the SQL query gets executed over database\"\"\"\n",
+        "    args_schema: Type[BaseModel] = GenerateAnswerforQuestionInput\n",
+        "\n",
+        "    def _run(self, question: str, sql_query: str, file_name: str, file_schema: str) -> Any:\n",
+        "        \"\"\"\n",
+        "        Synchronously run the agent tool to provide the result from sql query..\n",
+        "\n",
+        "        Args:\n",
+        "            question (str): The question asked by user in input terminal.\n",
+        "            file_name (str): Relevant file name generated by GetTargetFileSchemaTool.\n",
+        "            file_schema (str): Relevant file schema generated by GetTargetFileSchemaTool.\n",
+        "            sql_query (str): Relevant sql query generated from  GenerateSQLForFileTool\n",
+        "\n",
+        "        Returns:\n",
+        "            It execute sql query and provides result in dict format.\n",
+        "        \"\"\"\n",
+        "\n",
+        "        parse_sql_query = sql_query.split(\" \")\n",
+        "\n",
+        "        parse_sql_query[parse_sql_query.index(\"FROM\") + 1] = \"dftbl\"\n",
+        "\n",
+        "        new_query = \" \".join(parse_sql_query)\n",
+        "\n",
+        "        dftbl = pd.DataFrame(csv_files_data[file_name])\n",
+        "\n",
+        "        result_df = sqldf(new_query, locals())\n",
+        "\n",
+        "        return result_df.to_dict()"
+      ],
+      "outputs": [],
+      "execution_count": 12,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "2f28386f-e9cc-48ac-982b-ad4cfc4e79eb",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429016495
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Setting up the agent's function"
+      ],
+      "outputs": [],
+      "execution_count": 13,
+      "metadata": {
+        "gather": {
+          "logged": 1740429018293
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def my_agent_function(\n",
+        "    messages: List[ChatMessage], params: Optional[ChatParams] = None, verbose: bool = False\n",
+        ") -> ChatCompletionResponse:\n",
+        "    \"\"\"\n",
+        "    Executes a request using a chat agent with designated tools to generate responses.\n",
+        "\n",
+        "    Args:\n",
+        "        messages (List[ChatMessage]): A list of ChatMessage objects representing the\n",
+        "                                       conversation history.\n",
+        "        params (Optional[ChatParams]): Optional parameters for the chat. Defaults to None.\n",
+        "        verbose (bool): If True, enables verbose logging. Defaults to False.\n",
+        "\n",
+        "    Returns:\n",
+        "        ChatCompletionResponse: The generated response from the chat agent.\n",
+        "\n",
+        "    Raises:\n",
+        "        ValueError: If the messages list is empty.\n",
+        "    \"\"\"\n",
+        "    if not messages:\n",
+        "        raise ValueError(\"The messages list cannot be empty.\")\n",
+        "\n",
+        "    ask = messages[-1].content  # MFlow Signature requires both inputs to be arrays\n",
+        "\n",
+        "    chat_history = [\n",
+        "        {\"role\": message.role, \"content\": message.content} for message in messages[:-1]\n",
+        "    ]\n",
+        "\n",
+        "    agent_tools = [\n",
+        "        GetDatasetMetadaTool(),  # noqa\n",
+        "        GetTargetFileSchemaTool(),  # noqa\n",
+        "        GenerateSQLForFileTool(),  # noqa\n",
+        "        GenerateAnswerforQuestionTool(),  # noqa\n",
+        "    ]\n",
+        "\n",
+        "    prompt = ChatPromptTemplate.from_messages(\n",
+        "        [\n",
+        "            (\n",
+        "                \"system\",\n",
+        "                \"\"\"You are a helpful agent who receives questions and answers them\n",
+        "                    with the tools available. If none of your tools are able to provide\n",
+        "                    the necessary answer, respond saying you are not able to assist with\n",
+        "                    that question based on the tools available to you.\"\"\",\n",
+        "            ),\n",
+        "            MessagesPlaceholder(\"chat_history\", optional=True),\n",
+        "            (\"human\", \"{input}\"),\n",
+        "            MessagesPlaceholder(\"agent_scratchpad\"),\n",
+        "        ]\n",
+        "    )\n",
+        "\n",
+        "    model = AzureChatOpenAI(\n",
+        "        azure_ad_token_provider=token_provider,\n",
+        "        deployment_name=DEPLOYMENT_NAME,  # type: ignore  # noqa\n",
+        "        azure_endpoint=os.getenv(\"KONG_API_GATEWAY_ENDPOINT\"),\n",
+        "    )\n",
+        "\n",
+        "    agent = create_openai_tools_agent(model, agent_tools, prompt)\n",
+        "\n",
+        "    agent_executor = AgentExecutor(\n",
+        "        agent=agent,\n",
+        "        tools=agent_tools,\n",
+        "        verbose=verbose,\n",
+        "        return_intermediate_steps=True,\n",
+        "        handle_parsing_errors=True,\n",
+        "    )\n",
+        "\n",
+        "    if isinstance(agent_executor.agent, RunnableMultiActionAgent) or isinstance(\n",
+        "        agent_executor.agent, RunnableAgent\n",
+        "    ):\n",
+        "        agent_executor.agent.stream_runnable = False\n",
+        "\n",
+        "    res = agent_executor.invoke({\"input\": ask, \"chat_history\": chat_history})[\"output\"]\n",
+        "\n",
+        "    return ChatCompletionResponse(\n",
+        "        choices=[ChatChoice(message=ChatMessage(role=\"assistant\", content=res))]\n",
+        "    )"
+      ],
+      "outputs": [],
+      "execution_count": 14,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {
+            "byteLimit": 2048000,
+            "rowLimit": 10000
+          },
+          "inputWidgets": {},
+          "nuid": "1acfb796-0418-4317-8bb1-3c30999d4f20",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429019339
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# To test the agent uncomment the below\n",
+        "\n",
+        "# input_messages = [\n",
+        "#     ChatMessage(role=\"user\", content=\"How many asian patients in the dataset?\"),\n",
+        "# ]\n",
+        "# params_with_custom_inputs = ChatParams(custom_inputs={\"client_type\": \"mobile\"})\n",
+        "\n",
+        "# my_agent_function(messages=input_messages, params=params_with_custom_inputs, verbose=True)"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Error in StdOutCallbackHandler.on_chain_start callback: AttributeError(\"'NoneType' object has no attribute 'get'\")\n"
+        },
+        {
+          "output_type": "execute_result",
+          "execution_count": 16,
+          "data": {
+            "text/plain": "ChatCompletionResponse(choices=[ChatChoice(message=ChatMessage(role='assistant', content=\"Based on the dataset, there are no patients identified as 'asian' under the 'ethnicity' field. However, it's important to note that this result is based on the 'ethnicity' field, which may not be the correct field to query for race information. Typically, the 'race' field is used to determine this kind of demographic data, not 'ethnicity'. If you are looking for patients of Asian race, please let me know, and I can perform the correct query for you.\", refusal=None, name=None, tool_calls=None, tool_call_id=None), index=0, finish_reason='stop', logprobs=None)], usage=None, id=None, model=None, object='chat.completion', created=1740429738, custom_outputs=None)"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 16,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {},
+          "inputWidgets": {},
+          "nuid": "7468406e-45f6-4897-8916-304b4f52eb0a",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        },
+        "gather": {
+          "logged": 1740429052274
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Another test\n",
+        "\n",
+        "# input_messages = [\n",
+        "#     ChatMessage(role=\"user\", content=\"Describe the underlying datasources of the dataset.\"),\n",
+        "# ]\n",
+        "# params_with_custom_inputs = ChatParams(custom_inputs={\"client_type\": \"mobile\"})\n",
+        "\n",
+        "# print(my_agent_function(messages=input_messages, params=params_with_custom_inputs).choices[0].message.content)"
+      ],
+      "outputs": [],
+      "execution_count": 0,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {},
+          "inputWidgets": {},
+          "nuid": "241eeb72-0063-48f1-9de7-9fe98f176e66",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "outputs": [],
+      "execution_count": 0,
+      "metadata": {
+        "application/vnd.databricks.v1+cell": {
+          "cellMetadata": {},
+          "inputWidgets": {},
+          "nuid": "cbf14b88-21c0-49fd-aed4-d515bf314466",
+          "showTitle": false,
+          "tableResultSettingsMap": {},
+          "title": ""
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "application/vnd.databricks.v1+notebook": {
+      "computePreferences": null,
+      "dashboards": [],
+      "environmentMetadata": null,
+      "language": "python",
+      "notebookMetadata": {
+        "pythonIndentUnit": 4
+      },
+      "notebookName": "agent_langchain",
+      "widgets": {}
+    },
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.10.11",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "host": {
+        "AzureML": {
+          "notebookHasBeenCompleted": true
+        }
+      },
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      }
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    },
+    "kernel_info": {
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

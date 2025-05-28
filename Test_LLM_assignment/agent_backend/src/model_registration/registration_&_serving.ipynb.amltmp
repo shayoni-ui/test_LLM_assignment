@@ -1,0 +1,299 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "os.listdir()\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 1,
+          "data": {
+            "text/plain": "['.amlignore',\n '.amlignore.amltmp',\n '.ipynb_aml_checkpoints',\n 'agent_model.py',\n 'dummy_agent.py',\n 'evaluate_llm.py',\n 'model.py',\n 'model.py.amltmp',\n 'register_model.py',\n 'registration_&_serving.ipynb',\n 'registration_&_serving.ipynb.amltmp',\n '__init__.py',\n '__pycache__']"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 1,
+      "metadata": {
+        "gather": {
+          "logged": 1748398723124
+        }
+      },
+      "id": "6105f58d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "print(\"MLflow version:\", mlflow.__version__)\n",
+        "import mlflow.models as models\n",
+        "print(dir(models))"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "MLflow version: 2.13.0\n['EvaluationArtifact', 'EvaluationMetric', 'EvaluationResult', 'FlavorBackend', 'MetricThreshold', 'Model', 'ModelConfig', 'ModelInputExample', 'ModelSignature', 'Resource', 'ResourceType', '__all__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__', 'add_libraries_to_model', 'build_docker', 'dependencies_schema', 'evaluate', 'evaluation', 'flavor_backend', 'flavor_backend_registry', 'get_model_info', 'infer_pip_requirements', 'infer_signature', 'list_evaluators', 'make_metric', 'model', 'model_config', 'predict', 'python_api', 'resources', 'set_model', 'set_retriever_schema', 'set_signature', 'signature', 'utils', 'validate_schema']\n"
+        }
+      ],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1748398726931
+        }
+      },
+      "id": "9a249611-379e-4189-9fd1-ea24232fc047"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sys\n",
+        "import os\n",
+        "\n",
+        "sys.path.append(\"/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src\")\n"
+      ],
+      "outputs": [],
+      "execution_count": 3,
+      "metadata": {
+        "gather": {
+          "logged": 1748398728770
+        }
+      },
+      "id": "9ab3aff5"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(sys.path)\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "['/anaconda/envs/azureml_py310_sdkv2/lib/python310.zip', '/anaconda/envs/azureml_py310_sdkv2/lib/python3.10', '/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/lib-dynload', '', '/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages', '/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/setuptools/_vendor', '/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/azureml/_project/vendor', '/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src']\n"
+        }
+      ],
+      "execution_count": 4,
+      "metadata": {
+        "gather": {
+          "logged": 1748398729859
+        }
+      },
+      "id": "1121bc27"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from agents.utils import *\n",
+        "from agents.tools import *\n",
+        "from agents.my_agent import my_agent_function"
+      ],
+      "outputs": [],
+      "execution_count": 12,
+      "metadata": {
+        "gather": {
+          "logged": 1748398971802
+        }
+      },
+      "id": "237910d7-4135-4869-bd0a-48dc52b949f6"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "files_metadata, csv_files_data = generate_source_data(f'/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/datasources')\n"
+      ],
+      "outputs": [],
+      "execution_count": 13,
+      "metadata": {
+        "gather": {
+          "logged": 1748398973741
+        }
+      },
+      "id": "a44d4c32-765f-432d-adf6-4a0f8dede828"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from model import MyAgent, ChatMessage, ChatParams\n",
+        "from dummy_agent import dummy_agent_function"
+      ],
+      "outputs": [],
+      "execution_count": 14,
+      "metadata": {
+        "gather": {
+          "logged": 1748398977119
+        }
+      },
+      "id": "7b2081e7-4237-44f0-b694-7ec2887e6ccf"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "\n",
+        "agent = MyAgent(agent_name=\"echo\", agent_function=dummy_agent_function)\n",
+        "\n",
+        "input_messages = [ChatMessage(role=\"user\", content=\"What’s the weather like?\")]\n",
+        "params = ChatParams(temperature=0.5)\n",
+        "\n",
+        "response = agent.predict(context=None, model_input=[{\n",
+        "    \"messages\": [{\"role\": \"user\", \"content\": \"What’s the weather like?\"}],\n",
+        "    \"params\": {\"temperature\": 0.5}\n",
+        "}])\n",
+        "\n",
+        "print(response)\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[{'response': 'Echo: What’s the weather like? (temp=0.5)', 'metadata': {'echoed': True}}]\n"
+        }
+      ],
+      "execution_count": 15,
+      "metadata": {
+        "gather": {
+          "logged": 1748398980070
+        }
+      },
+      "id": "e5df5b6b"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "input_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"How many white patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"300\"),\n",
+        "    ChatMessage(role=\"user\", content=\"How many hispanic patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"400\"),\n",
+        "    ChatMessage(role=\"user\", content=\"What race was the last one I asked about?\"),\n",
+        "]\n",
+        "params_with_custom_inputs = ChatParams(custom_inputs={\"client_type\": \"mobile\"})"
+      ],
+      "outputs": [],
+      "execution_count": 16,
+      "metadata": {
+        "gather": {
+          "logged": 1748398983800
+        }
+      },
+      "id": "288ba7be-296e-4294-a44c-505abb6acb3d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "agent = MyAgent(agent_name=\"my_agent\", agent_function=my_agent_function)\n"
+      ],
+      "outputs": [],
+      "execution_count": 17,
+      "metadata": {
+        "gather": {
+          "logged": 1748398986050
+        }
+      },
+      "id": "c65aaedb-1bf0-4730-ad97-efbacf6a45c0"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "response = agent.predict(context=None, model_input=[{\n",
+        "    \"messages\": [\n",
+        "        {\"role\": \"user\", \"content\": \"How many white patients in the dataset?\"},\n",
+        "        {\"role\": \"assistant\", \"content\": \"300\"},\n",
+        "        {\"role\": \"user\", \"content\": \"How many hispanic patients in the dataset?\"},\n",
+        "        {\"role\": \"assistant\", \"content\": \"400\"},\n",
+        "        {\"role\": \"user\", \"content\": \"What race was the last one I asked about?\"}\n",
+        "    ],\n",
+        "    \"params\": {\"temperature\": 0.7}\n",
+        "}])\n",
+        "\n",
+        "# Since response is a list of dicts, loop through and print nicely:\n",
+        "for item in response:\n",
+        "    print(\"Response text:\", item['response'])\n",
+        "    print(\"Metadata:\", item['metadata'])\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3mYou last asked about Hispanic patients.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\nResponse text: \nMetadata: {}\n"
+        }
+      ],
+      "execution_count": 8,
+      "metadata": {
+        "gather": {
+          "logged": 1748398748990
+        }
+      },
+      "id": "193718b1-b7a5-4ee3-8b7e-03ee9e33649c"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model_input = [{\n",
+        "    \"messages\": [vars(m) for m in input_messages],  # convert ChatMessage objects to dicts\n",
+        "    \"params\": {\n",
+        "        \"custom_inputs\": {\"client_type\": \"mobile\"}\n",
+        "    }\n",
+        "}]\n",
+        "\n",
+        "response = agent.predict(context=None, model_input=model_input)\n",
+        "print(response)\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3mYou asked about Hispanic patients last time.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\n[{'response': '', 'metadata': {}}]\n"
+        }
+      ],
+      "execution_count": 18,
+      "metadata": {
+        "gather": {
+          "logged": 1748398997051
+        }
+      },
+      "id": "7ab7b648-be0e-4cc7-96ac-25372e73b949"
+    }
+  ],
+  "metadata": {
+    "kernel_info": {
+      "name": "python310-sdkv2"
+    },
+    "kernelspec": {
+      "name": "python310-sdkv2",
+      "language": "python",
+      "display_name": "Python 3.10 - SDK v2"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.10.14",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "host": {
+        "AzureML": {
+          "notebookHasBeenCompleted": true
+        }
+      },
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      }
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
