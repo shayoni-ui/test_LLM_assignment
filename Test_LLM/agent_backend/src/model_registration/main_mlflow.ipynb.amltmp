@@ -1,0 +1,396 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "os.listdir()\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 1,
+          "data": {
+            "text/plain": "['.amlignore',\n '.amlignore.amltmp',\n '.ipynb_aml_checkpoints',\n 'agent_config.py',\n 'agent_langchain.ipynb',\n 'agent_langchain.ipynb.amltmp',\n 'azure_openai.py',\n 'evaluate_agent.py',\n 'main copy.ipynb.amltmp',\n 'main-copy.ipynb.amltmp',\n 'main.ipynb',\n 'main.ipynb.amltmp',\n 'main_evaluate_agent.ipynb',\n 'main_MLflow.ipynb',\n 'main_mlflow.ipynb.amltmp',\n 'my_agent.py',\n 'my_agentv2.py',\n 'my_agentv2.py.amltmp',\n 'README.md',\n 'tools.py',\n 'tools2.py',\n 'utils.py',\n '__init__.py',\n '__pycache__']"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 1,
+      "metadata": {
+        "gather": {
+          "logged": 1748563908984
+        }
+      },
+      "id": "6105f58d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sys\n",
+        "import os\n",
+        "sys.path.append(os.getcwd())"
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1748563910741
+        }
+      },
+      "id": "a0bb1ac2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from utils import *"
+      ],
+      "outputs": [],
+      "execution_count": 1,
+      "metadata": {
+        "gather": {
+          "logged": 1748564316171
+        }
+      },
+      "id": "a218ce8b"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "files_metadata, csv_files_data = generate_source_data(f'/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM/agent_backend/datasources')\n"
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1748564317723
+        }
+      },
+      "id": "62aa93bc-4431-4ccc-8bf3-55d83393dcb2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "from my_agent import *\n",
+        "from evaluate_agent import *"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "[nltk_data] Downloading package punkt to /home/azureuser/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n"
+        }
+      ],
+      "execution_count": 3,
+      "metadata": {
+        "gather": {
+          "logged": 1748564322175
+        }
+      },
+      "id": "af78c107-3a72-4e15-8a55-329f92c21698"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Register with ML FLOW and use it evaluation metrics "
+      ],
+      "metadata": {},
+      "id": "d5132993"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "import mlflow \n",
+        "# MLFlow Setup\n",
+        "\n",
+        "experiment = mlflow.set_experiment(\"/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src\")  # type: ignore  # noqa\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "2025/05/30 00:18:45 INFO mlflow.tracking.fluent: Experiment with name '/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src' does not exist. Creating a new experiment.\n"
+        }
+      ],
+      "execution_count": 4,
+      "metadata": {
+        "gather": {
+          "logged": 1748564325777
+        }
+      },
+      "id": "cb7370b2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from mlflow.types.llm import ChatMessage, ChatParams, ChatChoice\n"
+      ],
+      "outputs": [],
+      "execution_count": 7,
+      "metadata": {
+        "gather": {
+          "logged": 1748561554937
+        }
+      },
+      "id": "b9c273db-b9ec-47c9-a499-365142bc0346"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "eval_data = prepare_eval_dataset()\n"
+      ],
+      "outputs": [],
+      "execution_count": 9,
+      "metadata": {
+        "gather": {
+          "logged": 1748564361751
+        }
+      },
+      "id": "93fa8c4f-7b7e-4f45-9cbc-e70669b5c363"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "#from agent_wrapper import MyAgentWrapper  # or define this inline\n",
+        "\n",
+        "with mlflow.start_run() as run:\n",
+        "    mlflow.pyfunc.log_model(\n",
+        "        artifact_path=\"agent_model\",\n",
+        "        python_model=MyAgentWrapper(),\n",
+        "        code_path=[\".\"],\n",
+        "        conda_env=None\n",
+        "    )\n",
+        "    print(\"Run ID:\", run.info.run_id)\n",
+        "\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/mlflow/pyfunc/__init__.py:2329: UserWarning: The `code_path` argument is replaced by `code_paths` and is deprecated as of MLflow version 2.12.0. This argument will be removed in a future release of MLflow.\n  warnings.warn(\n2025/05/29 23:39:23 INFO mlflow.types.utils: Unsupported type hint: <class 'pandas.core.frame.DataFrame'>, skipping schema inference\n2025/05/29 23:39:23 INFO mlflow.types.utils: Unsupported type hint: <class 'pandas.core.series.Series'>, skipping schema inference\n"
+        }
+      ],
+      "execution_count": 13,
+      "metadata": {
+        "gather": {
+          "logged": 1748561977237
+        }
+      },
+      "id": "5ffadda0-7e81-48d7-8c82-90b03d15f1a1"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from agent_wrapper import MyAgentWrapper\n",
+        "\n",
+        "with mlflow.start_run(run_id=\"7176f82c-fc6c-4f14-830e-a7ddee6e8893\") as run:\n",
+        "    mlflow.pyfunc.log_model(\"model\", python_model=MyAgentWrapper())\n",
+        "\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "2025/05/30 00:01:31 INFO mlflow.types.utils: Unsupported type hint: <class 'pandas.core.frame.DataFrame'>, skipping schema inference\n2025/05/30 00:01:31 INFO mlflow.types.utils: Unsupported type hint: <class 'pandas.core.series.Series'>, skipping schema inference\n/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/_distutils_hack/__init__.py:16: UserWarning: Distutils was imported before Setuptools, but importing Setuptools also replaces the `distutils` module in `sys.modules`. This may lead to undesirable behaviors or errors. To avoid these issues, avoid using distutils directly, ensure that setuptools is installed in the traditional way (e.g. not an editable install), and/or make sure that setuptools is always imported before distutils.\n  warnings.warn(\n/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/_distutils_hack/__init__.py:31: UserWarning: Setuptools is replacing distutils. Support for replacing an already imported distutils is deprecated. In the future, this condition will fail. Register concerns at https://github.com/pypa/setuptools/issues/new?template=distutils-deprecation.yml\n  warnings.warn(\n"
+        }
+      ],
+      "execution_count": null,
+      "metadata": {
+        "gather": {
+          "logged": 1748563719749
+        }
+      },
+      "id": "0e7c3c49-dfe4-42aa-8d28-c460f3b88e3f"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "\n",
+        "client = mlflow.tracking.MlflowClient()\n",
+        "run_id = \"7176f82c-fc6c-4f14-830e-a7ddee6e8893\"\n",
+        "artifacts = client.list_artifacts(run_id)\n",
+        "print(\"Artifacts:\", [a.path for a in artifacts])\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Artifacts: ['model']\n"
+        }
+      ],
+      "execution_count": 7,
+      "metadata": {
+        "gather": {
+          "logged": 1748564344141
+        }
+      },
+      "id": "99c6b802-cb62-43b1-b433-e5298eacf3ae"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install textstat\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Requirement already satisfied: textstat in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (0.7.7)\r\nRequirement already satisfied: setuptools in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from textstat) (68.0.0)\r\nRequirement already satisfied: cmudict in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from textstat) (1.0.32)\r\nRequirement already satisfied: pyphen in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from textstat) (0.17.2)\r\nRequirement already satisfied: importlib-metadata>=5 in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from cmudict->textstat) (8.0.0)\r\nRequirement already satisfied: importlib-resources>=5 in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from cmudict->textstat) (6.4.0)\r\nRequirement already satisfied: zipp>=0.5 in /anaconda/envs/azureml_py38/lib/python3.10/site-packages (from importlib-metadata>=5->cmudict->textstat) (3.19.2)\r\n"
+        }
+      ],
+      "execution_count": 16,
+      "metadata": {},
+      "id": "cd9faa12-1dba-450e-a8e1-693467d59de5"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "result = mlflow.evaluate(\n",
+        "    model=\"runs:/7176f82c-fc6c-4f14-830e-a7ddee6e8893/model\",\n",
+        "    data=eval_data,\n",
+        "    targets=\"target\",\n",
+        "    model_type=\"text\",\n",
+        "    evaluators=[\"default\"],\n",
+        "    evaluator_config={\n",
+        "        \"default\": {\n",
+        "            \"ignore_metrics\": [\n",
+        "                \"toxicity\",\n",
+        "                \"flesch_kincaid_grade_level\",\n",
+        "                \"ari_grade_level\"\n",
+        "            ]\n",
+        "        }\n",
+        "    }\n",
+        ")\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/pydantic/_internal/_config.py:373: UserWarning: Valid config keys have changed in V2:\n* 'schema_extra' has been renamed to 'json_schema_extra'\n  warnings.warn(message, UserWarning)\n/anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html\n  from .autonotebook import tqdm as notebook_tqdm\nDownloading artifacts: 100%|██████████| 9/9 [00:00<00:00, 23.31it/s]\n2025/05/30 00:19:32 INFO mlflow.models.evaluation.default_evaluator: Computing model predictions.\n2025/05/30 00:19:36 INFO mlflow.models.evaluation.default_evaluator: Testing metrics on first row...\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to load 'toxicity' metric (error: ModuleNotFoundError(\"No module named 'evaluate'\")), skipping metric logging.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'toxicity' because it returned None.\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to import textstat for flesch kincaid metric, skipping metric logging. Please install textstat using 'pip install textstat'.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'flesch_kincaid_grade_level' because it returned None.\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to import textstat for automated readability index metric, skipping metric logging. Please install textstat using 'pip install textstat'.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'ari_grade_level' because it returned None.\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to load 'toxicity' metric (error: ModuleNotFoundError(\"No module named 'evaluate'\")), skipping metric logging.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'toxicity' because it returned None.\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to import textstat for flesch kincaid metric, skipping metric logging. Please install textstat using 'pip install textstat'.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'flesch_kincaid_grade_level' because it returned None.\n2025/05/30 00:19:36 WARNING mlflow.metrics.metric_definitions: Failed to import textstat for automated readability index metric, skipping metric logging. Please install textstat using 'pip install textstat'.\n2025/05/30 00:19:36 WARNING mlflow.models.evaluation.default_evaluator: Did not log builtin metric 'ari_grade_level' because it returned None.\n"
+        }
+      ],
+      "execution_count": 10,
+      "metadata": {
+        "gather": {
+          "logged": 1748564377999
+        }
+      },
+      "id": "2dd52512-a99e-4500-869f-4e6876a72ab5"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "\n",
+        "run_id = \"7176f82c-fc6c-4f14-830e-a7ddee6e8893\"\n",
+        "client = mlflow.tracking.MlflowClient()\n",
+        "eval_artifact_path = f\"runs:/{run_id}/evaluations/eval_results.json\"\n",
+        "\n",
+        "# Download eval_results.json\n",
+        "local_path = mlflow.artifacts.download_artifacts(eval_artifact_path)\n",
+        "import json\n",
+        "\n",
+        "with open(local_path, \"r\") as f:\n",
+        "    eval_results = json.load(f)\n",
+        "\n",
+        "# Print all logged metrics\n",
+        "print(json.dumps(eval_results, indent=2))\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "\rDownloading artifacts:   0%|          | 0/1 [00:00<?, ?it/s]"
+        }
+      ],
+      "execution_count": 12,
+      "metadata": {
+        "gather": {
+          "logged": 1748564621764
+        }
+      },
+      "id": "b354570a-f543-4d42-84ef-41d9907f141d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import json\n",
+        "import pandas as pd\n",
+        "\n",
+        "def prepare_eval_dataset() -> pd.DataFrame:\n",
+        "    conversations = [\n",
+        "        {\n",
+        "            \"messages\": [\n",
+        "                {\"role\": \"user\", \"content\": \"How many white patients in the dataset?\"},\n",
+        "                {\"role\": \"assistant\", \"content\": \"300\"},\n",
+        "                {\"role\": \"user\", \"content\": \"How many hispanic patients in the dataset?\"},\n",
+        "                {\"role\": \"assistant\", \"content\": \"400\"},\n",
+        "                {\"role\": \"user\", \"content\": \"What race was the last one I asked about?\"}\n",
+        "            ],\n",
+        "            \"params\": {\"custom_inputs\": ()},  # can be left empty or customized\n",
+        "            \"target\": \"Hispanic\"\n",
+        "        }\n",
+        "        # Add more test cases here if needed\n",
+        "    ]\n",
+        "\n",
+        "    return pd.DataFrame([\n",
+        "        {\n",
+        "            \"messages\": json.dumps(conv[\"messages\"]),\n",
+        "            \"params\": json.dumps(conv[\"params\"]),\n",
+        "            \"target\": conv[\"target\"]\n",
+        "        }\n",
+        "        for conv in conversations\n",
+        "    ])\n"
+      ],
+      "outputs": [],
+      "execution_count": 5,
+      "metadata": {
+        "gather": {
+          "logged": 1748564331724
+        }
+      },
+      "id": "1d026d03-969e-4b13-9695-5896917c4753"
+    }
+  ],
+  "metadata": {
+    "kernel_info": {
+      "name": "python310-sdkv2"
+    },
+    "kernelspec": {
+      "name": "python310-sdkv2",
+      "language": "python",
+      "display_name": "Python 3.10 - SDK v2"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.10.14",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "host": {
+        "AzureML": {
+          "notebookHasBeenCompleted": true
+        }
+      },
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      }
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

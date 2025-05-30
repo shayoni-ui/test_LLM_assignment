@@ -1,0 +1,583 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "os.listdir()\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 1,
+          "data": {
+            "text/plain": "['.amlignore',\n '.amlignore.amltmp',\n '.ipynb_aml_checkpoints',\n 'agent_config.py',\n 'agent_langchain.ipynb',\n 'agent_langchain.ipynb.amltmp',\n 'azure_openai.py',\n 'evaluate_agent.py',\n 'main copy.ipynb',\n 'main copy.ipynb.amltmp',\n 'main-copy.ipynb.amltmp',\n 'main.ipynb',\n 'main.ipynb.amltmp',\n 'my_agent.py',\n 'my_agentv2.py',\n 'my_agentv2.py.amltmp',\n 'README.md',\n 'tools.py',\n 'tools2.py',\n 'utils.py',\n '__init__.py',\n '__pycache__']"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 1,
+      "metadata": {
+        "gather": {
+          "logged": 1748560699133
+        }
+      },
+      "id": "6105f58d"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sys\n",
+        "import os\n",
+        "sys.path.append(os.getcwd())"
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1748560701104
+        }
+      },
+      "id": "a0bb1ac2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from utils import *"
+      ],
+      "outputs": [],
+      "execution_count": 3,
+      "metadata": {
+        "gather": {
+          "logged": 1748560703656
+        }
+      },
+      "id": "a218ce8b"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "files_metadata, csv_files_data = generate_source_data(f'/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/datasources')\n"
+      ],
+      "outputs": [],
+      "execution_count": 4,
+      "metadata": {
+        "gather": {
+          "logged": 1748560705007
+        }
+      },
+      "id": "62aa93bc-4431-4ccc-8bf3-55d83393dcb2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "from my_agent import *\n",
+        "from evaluate_agent import *"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "[nltk_data] Downloading package punkt to /home/azureuser/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n"
+        }
+      ],
+      "execution_count": 5,
+      "metadata": {
+        "gather": {
+          "logged": 1748560710663
+        }
+      },
+      "id": "af78c107-3a72-4e15-8a55-329f92c21698"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Running the agent_config notebook to iniate the constants"
+      ],
+      "metadata": {},
+      "id": "d5132993"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "import mlflow \n",
+        "# MLFlow Setup\n",
+        "\n",
+        "experiment = mlflow.set_experiment(\"/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src\")  # type: ignore  # noqa\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "2025/05/29 22:50:23 INFO mlflow.tracking.fluent: Experiment with name '/home/azureuser/cloudfiles/code/Users/shayoni.x.dutta/Test_LLM_FinCONV/agent_backend/src' does not exist. Creating a new experiment.\n"
+        }
+      ],
+      "execution_count": 7,
+      "metadata": {
+        "gather": {
+          "logged": 1748559023831
+        }
+      },
+      "id": "cb7370b2"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from mlflow.types.llm import ChatMessage, ChatParams, ChatChoice\n"
+      ],
+      "outputs": [],
+      "execution_count": 8,
+      "metadata": {
+        "gather": {
+          "logged": 1748556919697
+        }
+      },
+      "id": "b9c273db-b9ec-47c9-a499-365142bc0346"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "input_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"How many asian patients in the dataset?\"),\n",
+        "]\n",
+        "#params_with_custom_inputs = ChatParams(custom_inputs={\"client_type\": \"mobile\"})\n",
+        "params_with_custom_inputs = ChatParams()\n",
+        "\n",
+        "my_agent_function(messages=input_messages, params=params_with_custom_inputs, verbose=True)"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3m\nInvoking: `get_file_metadata` with `{'question': 'How many asian patients in the dataset?'}`\n\n\n\u001b[0m\u001b[36;1m\u001b[1;3m{\"demographics\": {\"description\": \"Includes case-related demographic details such as ethnicity, gender, race, year of birth, and year of death. This data is essential for analyzing trends and patterns across different demographic groups, assisting in decision-making and resource allocation. The table helps understand the diversity and characteristics of the studied population, providing insights into disparities or specific demographic needs.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"ethnicity\": \"not hispanic or latino\", \"gender\": \"female\", \"race\": \"asian\", \"year_of_birth\": 1952.0, \"year_of_death\": 2002.0, \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}, \"diagnoses\": {\"description\": \"Includes data on tumor diagnoses, such as tumor classification, primary diagnosis, tissue or organ of origin, treatments administered, tumor grade, and file ID. It tracks and manages tumor diagnosis cases, offering insights into tumor types, origins, and treatments. This data is vital for healthcare professionals and researchers to analyze trends in tumor diagnoses and treatment outcomes.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"classification_of_tumor\": \"not reported\", \"diagnosis_id\": \"a4ecd69c-6156-5653-973f-5d3446d68a40\", \"primary_diagnosis\": \"Malignant lymphoma, large B-cell, diffuse, NOS\", \"tissue_or_organ_of_origin\": \"Intra-abdominal lymph nodes\", \"treatments0_therapeutic_agents\": \"N/A\", \"treatments0_treatment_id\": \"9c611d7e-3ccf-5886-8743-53ab33fef092\", \"treatments1_therapeutic_agents\": \"N/A\", \"treatments1_treatment_id\": \"dcb0c9cf-1372-5f90-b9f6-3fbfcb8b3cb7\", \"treatments1_updated_datetime\": \"2019-07-31T21:32:22.377Z\", \"tumor_grade\": \"not reported\", \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}, \"exposures\": {\"description\": \"The 'exposures' table includes data on various exposures like alcohol history, alcohol intensity, cigarettes per day, and years smoked for different case IDs. This information is essential for analyzing the potential impact of these exposures on specific cases. The table serves as a repository for exposure data used in research, risk assessment, and personalized interventions.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"alcohol_history\": \"Not Reported\", \"alcohol_intensity\": \"N/A\", \"cigarettes_per_day\": 0, \"years_smoked\": 0, \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}}\u001b[0m\u001b[32;1m\u001b[1;3m\nInvoking: `get_target_file_schema` with `{'question': 'How many asian patients in the dataset?', 'files_metadata': '{\"demographics\":{\"description\":\"Includes case-related demographic details such as ethnicity, gender, race, year of birth, and year of death. This data is essential for analyzing trends and patterns across different demographic groups, assisting in decision-making and resource allocation. The table helps understand the diversity and characteristics of the studied population, providing insights into disparities or specific demographic needs.\",\"sample_schema\":[{\"case_id\":\"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\",\"ethnicity\":\"not hispanic or latino\",\"gender\":\"female\",\"race\":\"asian\",\"year_of_birth\":1952.0,\"year_of_death\":2002.0,\"file_id\":\"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]},\"diagnoses\":{\"description\":\"Includes data on tumor diagnoses, such as tumor classification, primary diagnosis, tissue or organ of origin, treatments administered, tumor grade, and file ID. It tracks and manages tumor diagnosis cases, offering insights into tumor types, origins, and treatments. This data is vital for healthcare professionals and researchers to analyze trends in tumor diagnoses and treatment outcomes.\",\"sample_schema\":[{\"case_id\":\"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\",\"classification_of_tumor\":\"not reported\",\"diagnosis_id\":\"a4ecd69c-6156-5653-973f-5d3446d68a40\",\"primary_diagnosis\":\"Malignant lymphoma, large B-cell, diffuse, NOS\",\"tissue_or_organ_of_origin\":\"Intra-abdominal lymph nodes\",\"treatments0_therapeutic_agents\":\"N/A\",\"treatments0_treatment_id\":\"9c611d7e-3ccf-5886-8743-53ab33fef092\",\"treatments1_therapeutic_agents\":\"N/A\",\"treatments1_treatment_id\":\"dcb0c9cf-1372-5f90-b9f6-3fbfcb8b3cb7\",\"treatments1_updated_datetime\":\"2019-07-31T21:32:22.377Z\",\"tumor_grade\":\"not reported\",\"file_id\":\"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]},\"exposures\":{\"description\":\"The \\'exposures\\' table includes data on various exposures like alcohol history, alcohol intensity, cigarettes per day, and years smoked for different case IDs. This information is essential for analyzing the potential impact of these exposures on specific cases. The table serves as a repository for exposure data used in research, risk assessment, and personalized interventions.\",\"sample_schema\":[{\"case_id\":\"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\",\"alcohol_history\":\"Not Reported\",\"alcohol_intensity\":\"N/A\",\"cigarettes_per_day\":0,\"years_smoked\":0,\"file_id\":\"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}}'}`\n\n\n\u001b[0m\u001b[33;1m\u001b[1;3m{'file_name': 'demographics', 'file_schema': 'case_id, ethnicity, gender, race, year_of_birth, year_of_death, file_id'}\u001b[0m\u001b[32;1m\u001b[1;3m\nInvoking: `generate_sql_for_file` with `{'question': 'How many asian patients in the dataset?', 'file_name': 'demographics', 'file_schema': 'case_id, ethnicity, gender, race, year_of_birth, year_of_death, file_id'}`\n\n\n\u001b[0m\u001b[38;5;200m\u001b[1;3mSELECT COUNT(*) FROM demographics WHERE LOWER(race) = 'asian';\u001b[0m\u001b[32;1m\u001b[1;3m\nInvoking: `generate_answer_for_question` with `{'question': 'How many asian patients in the dataset?', 'sql_query': \"SELECT COUNT(*) FROM demographics WHERE LOWER(race) = 'asian';\", 'file_name': 'demographics', 'file_schema': 'case_id, ethnicity, gender, race, year_of_birth, year_of_death, file_id'}`\n\n\n\u001b[0m\u001b[36;1m\u001b[1;3m{'count_star()': {0: 627}}\u001b[0m\u001b[32;1m\u001b[1;3mThere are 627 Asian patients in the dataset.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\n"
+        },
+        {
+          "output_type": "execute_result",
+          "execution_count": 8,
+          "data": {
+            "text/plain": "{'choices': [{'message': {'role': 'assistant',\n    'content': 'There are 627 Asian patients in the dataset.'}}]}"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 8,
+      "metadata": {
+        "gather": {
+          "logged": 1748555790159
+        }
+      },
+      "id": "6ee886ab-7c67-4368-88e0-a7e6ee802240"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "input_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"Describe the underlying datasources of the dataset.\"),\n",
+        "]\n",
+        "#params_with_custom_inputs = ChatParams(custom_inputs={\"client_type\": \"mobile\"})\n",
+        "params_with_custom_inputs = ChatParams()\n",
+        "\n",
+        "my_agent_function(messages=input_messages, params=params_with_custom_inputs, verbose=True)"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3m\nInvoking: `get_file_metadata` with `{'question': 'Describe the underlying datasources of the dataset.'}`\n\n\n\u001b[0m\u001b[36;1m\u001b[1;3m{\"demographics\": {\"description\": \"Includes case-related demographic details such as ethnicity, gender, race, year of birth, and year of death. This data is essential for analyzing trends and patterns across different demographic groups, assisting in decision-making and resource allocation. The table helps understand the diversity and characteristics of the studied population, providing insights into disparities or specific demographic needs.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"ethnicity\": \"not hispanic or latino\", \"gender\": \"female\", \"race\": \"asian\", \"year_of_birth\": 1952.0, \"year_of_death\": 2002.0, \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}, \"diagnoses\": {\"description\": \"Includes data on tumor diagnoses, such as tumor classification, primary diagnosis, tissue or organ of origin, treatments administered, tumor grade, and file ID. It tracks and manages tumor diagnosis cases, offering insights into tumor types, origins, and treatments. This data is vital for healthcare professionals and researchers to analyze trends in tumor diagnoses and treatment outcomes.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"classification_of_tumor\": \"not reported\", \"diagnosis_id\": \"a4ecd69c-6156-5653-973f-5d3446d68a40\", \"primary_diagnosis\": \"Malignant lymphoma, large B-cell, diffuse, NOS\", \"tissue_or_organ_of_origin\": \"Intra-abdominal lymph nodes\", \"treatments0_therapeutic_agents\": \"N/A\", \"treatments0_treatment_id\": \"9c611d7e-3ccf-5886-8743-53ab33fef092\", \"treatments1_therapeutic_agents\": \"N/A\", \"treatments1_treatment_id\": \"dcb0c9cf-1372-5f90-b9f6-3fbfcb8b3cb7\", \"treatments1_updated_datetime\": \"2019-07-31T21:32:22.377Z\", \"tumor_grade\": \"not reported\", \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}, \"exposures\": {\"description\": \"The 'exposures' table includes data on various exposures like alcohol history, alcohol intensity, cigarettes per day, and years smoked for different case IDs. This information is essential for analyzing the potential impact of these exposures on specific cases. The table serves as a repository for exposure data used in research, risk assessment, and personalized interventions.\", \"sample_schema\": [{\"case_id\": \"0030a28c-81aa-44b0-8be0-b35e1dcbf98c\", \"alcohol_history\": \"Not Reported\", \"alcohol_intensity\": \"N/A\", \"cigarettes_per_day\": 0, \"years_smoked\": 0, \"file_id\": \"0bd755e8-752f-49f0-9574-ea7813a7f0e0\"}]}}\u001b[0m\u001b[32;1m\u001b[1;3mThe dataset is composed of three underlying sources (CSV files), each focusing on a different aspect of the records:\n\n1. Demographics:  \n   • Contains details like case ID, ethnicity, gender, race, year of birth, and year of death.  \n   • Used to understand population diversity and demographic patterns.  \n\n2. Diagnoses:  \n   • Includes data on tumor classification, primary diagnosis, tissue or organ of origin, and treatments.  \n   • Critical for analyzing tumor characteristics, treatment approaches, and outcomes.  \n\n3. Exposures:  \n   • Tracks potential risk factors, such as alcohol use, smoking habits (cigarettes per day, years smoked), and other exposures.  \n   • Helps researchers study correlations between these exposures and various health outcomes.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\n"
+        },
+        {
+          "output_type": "execute_result",
+          "execution_count": 9,
+          "data": {
+            "text/plain": "{'choices': [{'message': {'role': 'assistant',\n    'content': 'The dataset is composed of three underlying sources (CSV files), each focusing on a different aspect of the records:\\n\\n1. Demographics:  \\n   • Contains details like case ID, ethnicity, gender, race, year of birth, and year of death.  \\n   • Used to understand population diversity and demographic patterns.  \\n\\n2. Diagnoses:  \\n   • Includes data on tumor classification, primary diagnosis, tissue or organ of origin, and treatments.  \\n   • Critical for analyzing tumor characteristics, treatment approaches, and outcomes.  \\n\\n3. Exposures:  \\n   • Tracks potential risk factors, such as alcohol use, smoking habits (cigarettes per day, years smoked), and other exposures.  \\n   • Helps researchers study correlations between these exposures and various health outcomes.'}}]}"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 9,
+      "metadata": {
+        "gather": {
+          "logged": 1748555856725
+        }
+      },
+      "id": "dd36fef6-9f26-47ad-bcf6-5adc3352cc96"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "print(\"MLflow version:\", mlflow.__version__)\n",
+        "import mlflow.models as models\n",
+        "print(dir(models))"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "MLflow version: 2.13.0\n['EvaluationArtifact', 'EvaluationMetric', 'EvaluationResult', 'FlavorBackend', 'MetricThreshold', 'Model', 'ModelConfig', 'ModelInputExample', 'ModelSignature', 'Resource', 'ResourceType', '__all__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__', 'add_libraries_to_model', 'build_docker', 'dependencies_schema', 'evaluate', 'evaluation', 'flavor_backend', 'flavor_backend_registry', 'get_model_info', 'infer_pip_requirements', 'infer_signature', 'list_evaluators', 'make_metric', 'model', 'model_config', 'predict', 'python_api', 'resources', 'set_model', 'set_retriever_schema', 'set_signature', 'signature', 'utils', 'validate_schema']\n"
+        }
+      ],
+      "execution_count": 10,
+      "metadata": {
+        "gather": {
+          "logged": 1748555907243
+        }
+      },
+      "id": "bcd7d054-cd20-4d99-80b1-b0439b049563"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "from mlflow.types.llm import ChatMessage, ChatParams, ChatChoice"
+      ],
+      "outputs": [],
+      "execution_count": 11,
+      "metadata": {
+        "gather": {
+          "logged": 1748555922220
+        }
+      },
+      "id": "2de1fed8-04dc-4731-99e1-a9ceec531d02"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pip install nltk scikit-learn\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Collecting nltk\n  Downloading nltk-3.9.1-py3-none-any.whl.metadata (2.9 kB)\nRequirement already satisfied: scikit-learn in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (1.6.1)\nRequirement already satisfied: click in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from nltk) (8.1.7)\nRequirement already satisfied: joblib in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from nltk) (1.4.2)\nRequirement already satisfied: regex>=2021.8.3 in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from nltk) (2024.11.6)\nRequirement already satisfied: tqdm in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from nltk) (4.66.5)\nRequirement already satisfied: numpy>=1.19.5 in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from scikit-learn) (1.26.4)\nRequirement already satisfied: scipy>=1.6.0 in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from scikit-learn) (1.14.1)\nRequirement already satisfied: threadpoolctl>=3.1.0 in /anaconda/envs/azureml_py310_sdkv2/lib/python3.10/site-packages (from scikit-learn) (3.5.0)\nDownloading nltk-3.9.1-py3-none-any.whl (1.5 MB)\n\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.5/1.5 MB\u001b[0m \u001b[31m42.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n\u001b[?25hInstalling collected packages: nltk\nSuccessfully installed nltk-3.9.1\nNote: you may need to restart the kernel to use updated packages.\n"
+        }
+      ],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1748556873739
+        }
+      },
+      "id": "16161216-a898-43d7-9db5-6f572863a001"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import nltk\n",
+        "nltk.download('punkt')"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "[nltk_data] Downloading package punkt to /home/azureuser/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n"
+        },
+        {
+          "output_type": "execute_result",
+          "execution_count": 15,
+          "data": {
+            "text/plain": "True"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 15,
+      "metadata": {
+        "gather": {
+          "logged": 1748557348998
+        }
+      },
+      "id": "163340e0-46d0-478b-aea2-68cf393d4d91"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "test_cases = [\n",
+        "    TestCase(\n",
+        "        question=\"How many asian patients in the dataset?\",\n",
+        "        expected_sql=\"SELECT COUNT(*) FROM demographics WHERE LOWER(race) = 'asian';\",\n",
+        "        expected_answer_substr=\"627\",\n",
+        "        expected_answer_text=\"There are 627 Asian patients in the dataset.\",\n",
+        "    )\n",
+        "]\n",
+        "\n",
+        "results = [evaluate_agent_on_test_case(my_agent_function, tc) for tc in test_cases]"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Q: How many asian patients in the dataset?\n✔ Expected: There are 627 Asian patients in the dataset.\n🤖 Agent:    There are 627 Asian patients in the dataset.\n✅ Contains expected substring? True\n🎯 BLEU Score: 1.00\n🔗 Semantic Similarity: 1.00\n--------------------------------------------------\n"
+        }
+      ],
+      "execution_count": 17,
+      "metadata": {
+        "gather": {
+          "logged": 1748557441704
+        }
+      },
+      "id": "4f848ff1-d38f-4f29-b480-64a4220770bf"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "input_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"How many white patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"300\"),\n",
+        "    ChatMessage(role=\"user\", content=\"How many hispanic patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"400\"),\n",
+        "    ChatMessage(role=\"user\", content=\"What race was the last one I asked about?\"),\n",
+        "]\n",
+        "\n",
+        "params_with_custom_inputs = ChatParams()\n",
+        "\n",
+        "output = my_agent_function(messages=input_messages, params=params_with_custom_inputs, verbose=True)\n",
+        "print(output['choices'][0]['message']['content'])\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3mThe last one you asked about was Hispanic.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\nThe last one you asked about was Hispanic.\n"
+        }
+      ],
+      "execution_count": 19,
+      "metadata": {
+        "gather": {
+          "logged": 1748557729677
+        }
+      },
+      "id": "6e6558f6-5278-4b3b-a018-eec3d19039a9"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "multi-turn conversational evaluation ****"
+      ],
+      "metadata": {
+        "nteract": {
+          "transient": {
+            "deleting": false
+          }
+        }
+      },
+      "id": "f015e74f-4788-426f-9265-d236fb321431"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "multi_turn_case = TestCase(\n",
+        "    question=\"What race was the last one I asked about?\",\n",
+        "    expected_sql=\"\",  # Not applicable here\n",
+        "    expected_answer_substr=\"hispanic\",\n",
+        "    expected_answer_text=\"You last asked about Hispanic patients.\"\n",
+        ")\n",
+        "\n",
+        "\n",
+        "# Provide prior turns to simulate full dialogue\n",
+        "multi_turn_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"How many white patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"300\"),\n",
+        "    ChatMessage(role=\"user\", content=\"How many hispanic patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"400\"),\n",
+        "    ChatMessage(role=\"user\", content=\"What race was the last one I asked about?\")\n",
+        "]\n",
+        "\n",
+        "result = evaluate_agent_on_test_case(\n",
+        "    lambda messages, params=None, verbose=False: my_agent_function(messages=multi_turn_messages, params=params, verbose=verbose),\n",
+        "    multi_turn_case,\n",
+        "    verbose=True\n",
+        ")\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Q: What race was the last one I asked about?\n✔ Expected: You last asked about Hispanic patients.\n🤖 Agent:    The last one you asked about was Hispanic.\n✅ Contains expected substring? False\n🎯 BLEU Score: 0.07\n🔗 Semantic Similarity: 0.57\n--------------------------------------------------\n"
+        }
+      ],
+      "execution_count": 21,
+      "metadata": {
+        "gather": {
+          "logged": 1748557916662
+        }
+      },
+      "id": "5033b5b7-426a-46f7-b302-ca1e36514315"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "test_cases = [\n",
+        "    TestCase(\n",
+        "        question=\"How many asian patients in the dataset?\",\n",
+        "        expected_sql=\"\",  # Not applicable here\n",
+        "        expected_answer_substr=\"627\",\n",
+        "        expected_answer_text=\"There are 627 Asian patients in the dataset.\"\n",
+        "    ),\n",
+        "    TestCase(\n",
+        "        question=\"How many white patients in the dataset?\",\n",
+        "        expected_sql=\"\",  # Not applicable here\n",
+        "        expected_answer_substr=\"300\",\n",
+        "        expected_answer_text=\"There are 300 White patients in the dataset.\"\n",
+        "    ),\n",
+        "    TestCase(\n",
+        "        question=\"How many hispanic patients in the dataset?\",\n",
+        "        expected_sql=\"\",  # Not applicable here\n",
+        "        expected_answer_substr=\"400\",\n",
+        "        expected_answer_text=\"There are 400 Hispanic patients in the dataset.\"\n",
+        "    ),\n",
+        "    TestCase(\n",
+        "        question=\"What race was the last one I asked about?\",\n",
+        "        expected_sql=\"\",  # Not applicable here\n",
+        "        expected_answer_substr=\"hispanic\",\n",
+        "        expected_answer_text=\"You last asked about Hispanic patients.\"\n",
+        "    )\n",
+        "]\n",
+        "\n",
+        "results = [evaluate_agent_on_test_case(my_agent_function, tc, verbose=True) for tc in test_cases]\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Q: How many asian patients in the dataset?\n✔ Expected: There are 627 Asian patients in the dataset.\n🤖 Agent:    There are 627 Asian patients in the dataset.\n✅ Contains expected substring? True\n🎯 BLEU Score: 1.00\n🔗 Semantic Similarity: 1.00\n--------------------------------------------------\nQ: How many white patients in the dataset?\n✔ Expected: There are 300 White patients in the dataset.\n🤖 Agent:    There are 7571 white patients in the dataset.\n✅ Contains expected substring? False\n🎯 BLEU Score: 0.66\n🔗 Semantic Similarity: 0.78\n--------------------------------------------------\nQ: How many hispanic patients in the dataset?\n✔ Expected: There are 400 Hispanic patients in the dataset.\n🤖 Agent:    It appears there are no reported Hispanic patients in the dataset. The count is 0.\n✅ Contains expected substring? False\n🎯 BLEU Score: 0.32\n🔗 Semantic Similarity: 0.57\n--------------------------------------------------\nQ: What race was the last one I asked about?\n✔ Expected: You last asked about Hispanic patients.\n🤖 Agent:    I’m sorry, but I don’t have enough information to determine that.\n✅ Contains expected substring? False\n🎯 BLEU Score: 0.01\n🔗 Semantic Similarity: 0.00\n--------------------------------------------------\n"
+        }
+      ],
+      "execution_count": 22,
+      "metadata": {
+        "gather": {
+          "logged": 1748558147787
+        }
+      },
+      "id": "17838d87-5c35-4ecf-ae5a-3b3eececd999"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(results)"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[{'question': 'How many asian patients in the dataset?', 'answer': 'There are 627 Asian patients in the dataset.', 'bleu_score': 1.0, 'semantic_similarity': 1.0000000000000002, 'contains_expected': True}, {'question': 'How many white patients in the dataset?', 'answer': 'There are 7571 white patients in the dataset.', 'bleu_score': 0.6606328636027614, 'semantic_similarity': 0.7799154245579976, 'contains_expected': False}, {'question': 'How many hispanic patients in the dataset?', 'answer': 'It appears there are no reported Hispanic patients in the dataset. The count is 0.', 'bleu_score': 0.3168900267453786, 'semantic_similarity': 0.5712407690968991, 'contains_expected': False}, {'question': 'What race was the last one I asked about?', 'answer': 'I’m sorry, but I don’t have enough information to determine that.', 'bleu_score': 0.011502783619900045, 'semantic_similarity': 0.0, 'contains_expected': False}]\n"
+        }
+      ],
+      "execution_count": 23,
+      "metadata": {
+        "gather": {
+          "logged": 1748558148017
+        }
+      },
+      "id": "5eb606d5-4dd6-4f6f-8146-848dae0dea15"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "multi_turn_case = TestCase(\n",
+        "    question=\"What race was the last one I asked about?\",\n",
+        "    expected_sql=\"\",  # Not applicable here\n",
+        "    expected_answer_substr=\"hispanic\",\n",
+        "    expected_answer_text=\"You last asked about Hispanic patients.\"\n",
+        ")\n",
+        "\n",
+        "\n",
+        "# Provide prior turns to simulate full dialogue\n",
+        "multi_turn_messages = [\n",
+        "    ChatMessage(role=\"user\", content=\"How many white patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"300\"),\n",
+        "    ChatMessage(role=\"user\", content=\"How many hispanic patients in the dataset?\"),\n",
+        "    ChatMessage(role=\"assistant\", content=\"400\"),\n",
+        "    ChatMessage(role=\"user\", content=\"What race was the last one I asked about?\")\n",
+        "]\n",
+        "\n",
+        "result = evaluate_agent_on_test_case(\n",
+        "    lambda messages, params=None, verbose=False: my_agent_function(messages=multi_turn_messages, params=params, verbose=verbose),\n",
+        "    multi_turn_case,\n",
+        "    verbose=True\n",
+        ")\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n\n\u001b[1m> Entering new AgentExecutor chain...\u001b[0m\n\u001b[32;1m\u001b[1;3mYou last asked about the Hispanic patient group.\u001b[0m\n\n\u001b[1m> Finished chain.\u001b[0m\nAgent Answer: You last asked about the Hispanic patient group.\nExpected Substring: hispanic\nExpected Answer: You last asked about Hispanic patients.\nBLEU Score: 0.3303164318013807\nSemantic Similarity: 0.5727393584196199\n"
+        }
+      ],
+      "execution_count": 6,
+      "metadata": {
+        "gather": {
+          "logged": 1748560731833
+        }
+      },
+      "id": "cb72cf9b-3fad-4e4d-ae4c-9320b29af878"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import mlflow\n",
+        "mlflow.log_metrics({\"bleu_score\": bleu, \"semantic_similarity\": semantic})\n",
+        "mlflow.log_dict(result, \"agent_output.json\")\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "name 'bleu' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "Cell \u001b[0;32mIn[7], line 2\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[38;5;28;01mimport\u001b[39;00m \u001b[38;5;21;01mmlflow\u001b[39;00m\n\u001b[0;32m----> 2\u001b[0m mlflow\u001b[38;5;241m.\u001b[39mlog_metrics({\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mbleu_score\u001b[39m\u001b[38;5;124m\"\u001b[39m: \u001b[43mbleu\u001b[49m, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124msemantic_similarity\u001b[39m\u001b[38;5;124m\"\u001b[39m: semantic})\n\u001b[1;32m      3\u001b[0m mlflow\u001b[38;5;241m.\u001b[39mlog_dict(result, \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124magent_output.json\u001b[39m\u001b[38;5;124m\"\u001b[39m)\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'bleu' is not defined"
+          ]
+        }
+      ],
+      "execution_count": 7,
+      "metadata": {
+        "gather": {
+          "logged": 1748560745118
+        }
+      },
+      "id": "44a53ab3-11aa-455f-9962-94543483aa6d"
+    }
+  ],
+  "metadata": {
+    "kernel_info": {
+      "name": "python310-sdkv2"
+    },
+    "kernelspec": {
+      "name": "python310-sdkv2",
+      "language": "python",
+      "display_name": "Python 3.10 - SDK v2"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.10.14",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "host": {
+        "AzureML": {
+          "notebookHasBeenCompleted": true
+        }
+      },
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      }
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
